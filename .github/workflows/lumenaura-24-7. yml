@@ -1,0 +1,35 @@
+name: Lumenaura 24/7 Running
+
+on:
+  schedule: 
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  run-lumenaura:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version:  '3.9'
+      - name: Install dependencies
+        run:  |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run Lumenaura
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_OWNER_CHAT_ID: ${{ secrets. TELEGRAM_OWNER_CHAT_ID }}
+          TELEGRAM_OPS_CHAT_ID: ${{ secrets.TELEGRAM_OPS_CHAT_ID }}
+          HUGGING_FACE_API_KEY: ${{ secrets.HUGGING_FACE_API_KEY }}
+          SHOPIFY_SHOP_NAME: ${{ secrets.SHOPIFY_SHOP_NAME }}
+          SHOPIFY_API_KEY: ${{ secrets. SHOPIFY_API_KEY }}
+          SHOPIFY_PASSWORD: ${{ secrets.SHOPIFY_PASSWORD }}
+          DATABASE_PATH: ${{ secrets.DATABASE_PATH }}
+          ORGANIZATION_NAME: ${{ secrets.ORGANIZATION_NAME }}
+          APP_NAME: ${{ secrets.APP_NAME }}
+        run: |
+          timeout 3500 python main.py || true
